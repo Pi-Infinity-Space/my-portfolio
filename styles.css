@@ -195,3 +195,27 @@
   max-width: 100%;
   border-radius: 8px;
 }
+.about {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+.about-text p + p { margin-top: 1rem; }
+.about-text p { color: var(--muted); }
+.about-card { gap: 0.9rem; }
+.about-card:hover {
+  border-color: var(--border);
+  transform: none;
+}
+.contact-text {
+  max-width: 34rem;
+  color: var(--muted);
+}
+.about-links {
+  justify-content: flex-start;
+  margin-top: 1.25rem;
+}
+@media (max-width: 720px) {
+  .about { grid-template-columns: 1fr; }
+}
