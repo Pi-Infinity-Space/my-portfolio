@@ -72,3 +72,38 @@ async function renderAll() {
 }
 
 renderAll();
+async function renderArticle() {
+  const box = document.getElementById("article");
+  if (!box) return;
+
+  const notFound = '<a href="writing.html" class="back">&larr; All writing</a><p class="empty">Article not found.</p>';
+  const slug = new URLSearchParams(window.location.search).get("post");
+  if (!slug || !/^[a-z0-9-]+$/i.test(slug)) {
+    box.innerHTML = notFound;
+    return;
+  }
+
+  try {
+    const [articles, res] = await Promise.all([
+      loadJSON("articles/articles.json"),
+      fetch(`articles/${slug}.md`)
+    ]);
+    if (!res.ok) throw new Error("missing");
+
+    const meta = articles.find(a => a.file === slug);
+    const markdown = await res.text();
+    const title = meta ? meta.title : slug;
+
+    document.title = title + " | your-name";
+    box.innerHTML = `
+      <a href="writing.html" class="back">&larr; All writing</a>
+      ${meta ? `<span class="card-meta">${meta.date}</span>` : ""}
+      <h1>${title}</h1>
+      <div class="article-body">${marked.parse(markdown)}</div>`;
+  } catch (err) {
+    console.error(err);
+    box.innerHTML = notFound;
+  }
+}
+
+renderArticle();
