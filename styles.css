@@ -1,0 +1,102 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 2rem;
+  border-bottom: 1px solid var(--border);
+}
+.logo { font-family: var(--font-mono); font-weight: 700; }
+.cursor { color: var(--accent); animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.navbar nav { display: flex; gap: 1.75rem; }
+.navbar nav a {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+.navbar nav a:hover,
+.navbar nav a.active { color: var(--accent); }
+.navbar nav a.active { text-shadow: 0 0 12px var(--accent); }
+.hero {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 1.5rem;
+}
+.eyebrow {
+  font-family: var(--font-mono);
+  color: var(--accent);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+.hero h1 {
+  font-family: var(--font-mono);
+  font-size: clamp(2.2rem, 7vw, 4.5rem);
+  line-height: 1.1;
+}
+.intro {
+  max-width: 34rem;
+  margin-top: 1.25rem;
+  color: var(--muted);
+  font-size: 1.1rem;
+}
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+.btn {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  padding: 0.7rem 1.4rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  transition: border-color 0.2s, color 0.2s;
+}
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.btn-primary:hover { color: var(--bg); opacity: 0.85; }
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  margin-top: 5rem;
+  padding: 2.5rem 1.5rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+.footer-message {
+  max-width: 30rem;
+  color: var(--muted);
+}
+.social-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+.social-btn {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  padding: 0.55rem 1.1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  transition: border-color 0.2s, color 0.2s;
+}
+.social-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.footer-copy {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
