@@ -1,108 +1,103 @@
 async function loadJSON(path) {
-  const res = await fetch(path);
-  if (!res.ok) throw new Error(path + " not found");
-  return res.json();
+  const response = await fetch(path);
+  if (!response.ok) throw new Error(`${path} returned ${response.status}`);
+  return response.json();
 }
 
-function articleCard(a) {
+function articleCard(article) {
   return `
-    <a href="article.html?post=${a.file}" class="card">
-      <span class="card-meta">${a.date}</span>
-      <h3 class="card-title">${a.title}</h3>
-      <p class="card-desc">${a.summary}</p>
+    <a href="article.html?post=${encodeURIComponent(article.file)}" class="card">
+      <span class="card-meta">${article.date}</span>
+      <h3 class="card-title">${article.title}</h3>
+      <p class="card-desc">${article.summary}</p>
     </a>`;
 }
 
-function projectCard(p) {
-  const tags = p.tech.map(t => `<span class="tag">${t}</span>`).join("");
-  const live = p.live ? `<a href="${p.live}" target="_blank" rel="noopener">Live</a>` : "";
-  const code = p.code ? `<a href="${p.code}" target="_blank" rel="noopener">Code</a>` : "";
+function projectCard(project) {
+  const tags = project.tech.map(tech => `<span class="tag">${tech}</span>`).join("");
+  const live = project.live
+    ? `<a href="${project.live}" target="_blank" rel="noopener noreferrer">Live</a>`
+    : "";
+  const code = project.code
+    ? `<a href="${project.code}" target="_blank" rel="noopener noreferrer">Code</a>`
+    : "";
+
   return `
     <div class="card">
       <span class="card-meta">Project</span>
-      <h3 class="card-title">${p.title}</h3>
-      <p class="card-desc">${p.description}</p>
+      <h3 class="card-title">${project.title}</h3>
+      <p class="card-desc">${project.description}</p>
       <div class="tags">${tags}</div>
       <div class="card-links">${live}${code}</div>
     </div>`;
 }
 
-async function renderLatest() {
-  const articleBox = document.getElementById("latest-articles");
-  const projectBox = document.getElementById("latest-projects");
+async function renderList(id, path, label, renderItem, emptyMessage, limit) {
+  const box = document.getElementById(id);
+  if (!box) return;
 
   try {
-    if (articleBox) {
-      const articles = await loadJSON("articles/articles.json");
-      articles.sort((a, b) => new Date(b.date) - new Date(a.date));
-      articleBox.innerHTML = articles.slice(0, 3).map(articleCard).join("");
+    const items = await loadJSON(path);
+    if (!Array.isArray(items)) throw new Error(`${path} must contain a JSON array`);
+    if (label === "articles") {
+      items.sort((a, b) => new Date(b.date) - new Date(a.date));
     }
-    if (projectBox) {
-      const projects = await loadJSON("projects.json");
-      projectBox.innerHTML = projects.slice(0, 3).map(projectCard).join("");
-    }
-  } catch (err) {
-    console.error(err);
+
+    const visibleItems = typeof limit === "number" ? items.slice(0, limit) : items;
+    box.innerHTML = visibleItems.length
+      ? visibleItems.map(renderItem).join("")
+      : `<p class="empty">${emptyMessage}</p>`;
+  } catch (error) {
+    console.error(`Unable to load ${label}.`, error);
+    box.innerHTML = `<p class="empty">Unable to load ${label} right now. Please try again later.</p>`;
   }
 }
 
-renderLatest();
+renderList("latest-articles", "articles/articles.json", "articles", articleCard, "No articles yet.", 3);
+renderList("latest-projects", "projects.json", "projects", projectCard, "No projects yet.", 3);
+renderList("all-articles", "articles/articles.json", "articles", articleCard, "No articles yet.");
+renderList("all-projects", "projects.json", "projects", projectCard, "No projects yet.");
 
-async function renderAll() {
-  const allArticles = document.getElementById("all-articles");
-  const allProjects = document.getElementById("all-projects");
-
-  try {
-    if (allArticles) {
-      const articles = await loadJSON("articles/articles.json");
-      articles.sort((a, b) => new Date(b.date) - new Date(a.date));
-      allArticles.innerHTML = articles.length
-        ? articles.map(articleCard).join("")
-        : '<p class="empty">No articles yet.</p>';
-    }
-    if (allProjects) {
-      const projects = await loadJSON("projects.json");
-      allProjects.innerHTML = projects.length
-        ? projects.map(projectCard).join("")
-        : '<p class="empty">No projects yet.</p>';
-    }
-  } catch (err) {
-    console.error(err);
-  }
-}
-
-renderAll();
 async function renderArticle() {
   const box = document.getElementById("article");
   if (!box) return;
 
-  const notFound = '<a href="writing.html" class="back">&larr; All writing</a><p class="empty">Article not found.</p>';
+  const showNotFound = () => {
+    box.innerHTML = '<a href="writing.html" class="back">&larr; All writing</a><p class="empty">Article not found.</p>';
+  };
   const slug = new URLSearchParams(window.location.search).get("post");
   if (!slug || !/^[a-z0-9-]+$/i.test(slug)) {
-    box.innerHTML = notFound;
+    showNotFound();
     return;
   }
 
   try {
-    const [articles, res] = await Promise.all([
-      loadJSON("articles/articles.json"),
-      fetch(`articles/${slug}.md`)
-    ]);
-    if (!res.ok) throw new Error("missing");
+    const articles = await loadJSON("articles/articles.json");
+    if (!Array.isArray(articles)) throw new Error("Article metadata must contain a JSON array");
+    const article = articles.find(item => item.file === slug);
+    if (!article) {
+      showNotFound();
+      return;
+    }
 
-    const meta = articles.find(a => a.file === slug);
-    const markdown = await res.text();
-    const title = meta ? meta.title : slug;
+    const response = await fetch(`articles/${encodeURIComponent(slug)}.md`);
+    if (response.status === 404) {
+      showNotFound();
+      return;
+    }
+    if (!response.ok) throw new Error(`Article returned ${response.status}`);
+    if (!window.marked) throw new Error("Markdown renderer did not load");
 
-    document.title = title + " | your-name";
+    const markdown = await response.text();
+    document.title = `${article.title} | Odinakachukwu Okafor`;
     box.innerHTML = `
       <a href="writing.html" class="back">&larr; All writing</a>
-      ${meta ? `<span class="card-meta">${meta.date}</span>` : ""}
-      <h1>${title}</h1>
-      <div class="article-body">${marked.parse(markdown)}</div>`;
-  } catch (err) {
-    console.error(err);
-    box.innerHTML = notFound;
+      <span class="card-meta">${article.date}</span>
+      <h1>${article.title}</h1>
+      <div class="article-body">${window.marked.parse(markdown)}</div>`;
+  } catch (error) {
+    console.error("Unable to load article.", error);
+    box.innerHTML = '<a href="writing.html" class="back">&larr; All writing</a><p class="empty">Unable to load this article right now. Please try again later.</p>';
   }
 }
 
