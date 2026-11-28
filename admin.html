@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Admin | Odinakachukwu Okafor</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="navbar">
+    <a href="index.html" class="logo">admin<span class="cursor">_</span></a>
+    <nav aria-label="Admin navigation">
+      <a href="index.html">View site</a>
+    </nav>
+  </header>
+
+  <main class="admin">
+    <p id="status" class="status" role="status" aria-live="polite" hidden></p>
+
+    <section id="login-panel">
+      <h1>Admin login</h1>
+      <p class="muted">Connect with a fine-grained GitHub token scoped to this repository with Contents read/write permission. The token is stored only in this tab and clears when the tab closes. Use this page only on a device you trust.</p>
+      <form id="login-form" class="form">
+        <label for="token">GitHub token
+          <input type="password" id="token" autocomplete="off" required>
+        </label>
+        <label for="owner">GitHub username or organization
+          <input type="text" id="owner" autocomplete="username" required>
+        </label>
+        <label for="repo">Repository name
+          <input type="text" id="repo" required>
+        </label>
+        <label for="branch">Publishing branch
+          <input type="text" id="branch" value="main" required>
+        </label>
+        <button class="btn btn-primary" type="submit">Connect</button>
+      </form>
+    </section>
+
+    <section id="editor" hidden>
+      <div class="admin-bar">
+        <div class="tabs" role="tablist" aria-label="Content type">
+          <button class="tab active" id="articles-tab" data-tab="articles" type="button" role="tab" aria-selected="true">Articles</button>
+          <button class="tab" id="projects-tab" data-tab="projects" type="button" role="tab" aria-selected="false">Projects</button>
+        </div>
+        <button class="btn" id="logout" type="button">Sign out</button>
+      </div>
+
+      <section id="panel-articles" role="tabpanel" aria-labelledby="articles-tab">
+        <label class="select-label" for="article-select">Edit an existing article or write a new one
+          <select id="article-select"></select>
+        </label>
+        <form id="article-form" class="form">
+          <label for="a-title">Title
+            <input type="text" id="a-title" required>
+          </label>
+          <label for="a-date">Date
+            <input type="date" id="a-date" required>
+          </label>
+          <label for="a-slug">Slug (Markdown filename without extension)
+            <input type="text" id="a-slug" pattern="[a-z0-9-]+" required>
+          </label>
+          <label for="a-summary">Summary
+            <textarea id="a-summary" rows="2" required></textarea>
+          </label>
+          <label for="a-content">Article (Markdown)
+            <textarea id="a-content" rows="16" required></textarea>
+          </label>
+          <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Publish article</button>
+            <button class="btn btn-danger" id="a-delete" type="button" hidden>Delete article</button>
+          </div>
+        </form>
+      </section>
+
+      <section id="panel-projects" role="tabpanel" aria-labelledby="projects-tab" hidden>
+        <label class="select-label" for="project-select">Edit an existing project or add a new one
+          <select id="project-select"></select>
+        </label>
+        <form id="project-form" class="form">
+          <label for="p-title">Title
+            <input type="text" id="p-title" required>
+          </label>
+          <label for="p-description">Description
+            <textarea id="p-description" rows="3" required></textarea>
+          </label>
+          <label for="p-tech">Technologies (separate with commas)
+            <input type="text" id="p-tech" placeholder="HTML, CSS, JavaScript">
+          </label>
+          <label for="p-live">Live link (optional)
+            <input type="url" id="p-live">
+          </label>
+          <label for="p-code">Code link (optional)
+            <input type="url" id="p-code">
+          </label>
+          <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Publish project</button>
+            <button class="btn btn-danger" id="p-delete" type="button" hidden>Delete project</button>
+          </div>
+        </form>
+      </section>
+    </section>
+  </main>
+
+  <script src="admin.js"></script>
+</body>
+</html>

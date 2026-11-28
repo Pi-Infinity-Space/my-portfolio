@@ -4,29 +4,91 @@ async function loadJSON(path) {
   return response.json();
 }
 
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, character => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[character]);
+}
+
+function safeExternalUrl(value) {
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" ? url.href : "";
+  } catch {
+    return "";
+  }
+}
+
+function sanitizeArticleHTML(html) {
+  const allowedTags = new Set([
+    "A", "BLOCKQUOTE", "BR", "CODE", "DEL", "EM", "H1", "H2", "H3",
+    "H4", "H5", "H6", "HR", "IMG", "LI", "OL", "P", "PRE", "STRONG",
+    "TABLE", "TBODY", "TD", "TH", "THEAD", "TR", "UL"
+  ]);
+  const parsed = new DOMParser().parseFromString(html, "text/html");
+
+  function clean(node) {
+    for (const child of [...node.children]) {
+      if (!allowedTags.has(child.tagName)) {
+        child.remove();
+        continue;
+      }
+
+      for (const attribute of [...child.attributes]) {
+        const name = attribute.name.toLowerCase();
+        const allowed = name === "title" || name === "alt" ||
+          (child.tagName === "A" && name === "href") ||
+          (child.tagName === "IMG" && name === "src");
+        if (!allowed) child.removeAttribute(attribute.name);
+      }
+
+      if (child.tagName === "A" && child.hasAttribute("href")) {
+        const safeHref = safeExternalUrl(child.getAttribute("href"));
+        if (safeHref) child.setAttribute("href", safeHref);
+        else child.removeAttribute("href");
+      }
+      if (child.tagName === "IMG" && child.hasAttribute("src")) {
+        const safeSrc = safeExternalUrl(child.getAttribute("src"));
+        if (safeSrc) child.setAttribute("src", safeSrc);
+        else child.remove();
+      }
+      if (child.isConnected) clean(child);
+    }
+  }
+
+  clean(parsed.body);
+  return parsed.body.innerHTML;
+}
+
 function articleCard(article) {
   return `
     <a href="article.html?post=${encodeURIComponent(article.file)}" class="card">
-      <span class="card-meta">${article.date}</span>
-      <h3 class="card-title">${article.title}</h3>
-      <p class="card-desc">${article.summary}</p>
+      <span class="card-meta">${escapeHTML(article.date)}</span>
+      <h3 class="card-title">${escapeHTML(article.title)}</h3>
+      <p class="card-desc">${escapeHTML(article.summary)}</p>
     </a>`;
 }
 
 function projectCard(project) {
-  const tags = project.tech.map(tech => `<span class="tag">${tech}</span>`).join("");
-  const live = project.live
-    ? `<a href="${project.live}" target="_blank" rel="noopener noreferrer">Live</a>`
+  const tags = project.tech.map(tech => `<span class="tag">${escapeHTML(tech)}</span>`).join("");
+  const liveUrl = project.live ? safeExternalUrl(project.live) : "";
+  const codeUrl = project.code ? safeExternalUrl(project.code) : "";
+  const live = liveUrl
+    ? `<a href="${escapeHTML(liveUrl)}" target="_blank" rel="noopener noreferrer">Live</a>`
     : "";
-  const code = project.code
-    ? `<a href="${project.code}" target="_blank" rel="noopener noreferrer">Code</a>`
+  const code = codeUrl
+    ? `<a href="${escapeHTML(codeUrl)}" target="_blank" rel="noopener noreferrer">Code</a>`
     : "";
 
   return `
     <div class="card">
       <span class="card-meta">Project</span>
-      <h3 class="card-title">${project.title}</h3>
-      <p class="card-desc">${project.description}</p>
+      <h3 class="card-title">${escapeHTML(project.title)}</h3>
+      <p class="card-desc">${escapeHTML(project.description)}</p>
       <div class="tags">${tags}</div>
       <div class="card-links">${live}${code}</div>
     </div>`;
@@ -94,7 +156,7 @@ async function renderArticle() {
       <a href="writing.html" class="back">&larr; All writing</a>
       <span class="card-meta">${article.date}</span>
       <h1>${article.title}</h1>
-      <div class="article-body">${window.marked.parse(markdown)}</div>`;
+      <div class="article-body">${sanitizeArticleHTML(window.marked.parse(markdown))}</div>`;
   } catch (error) {
     console.error("Unable to load article.", error);
     box.innerHTML = '<a href="writing.html" class="back">&larr; All writing</a><p class="empty">Unable to load this article right now. Please try again later.</p>';
