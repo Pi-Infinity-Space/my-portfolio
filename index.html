@@ -6,7 +6,6 @@
         <link rel="stylesheet" href="styles.css">
 	</head>
 	<body>
-
         <header class="navbar">
             <a href="index.html" class="logo">Odinakachukwu<span class="cursor">_</span></a>
             <nav>
@@ -16,30 +15,33 @@
                 <a href="about.html">About</a>
             </nav>
         </header>
-
-		<!-- <h1 >Hi, I'm Odinakachukwu Okafor. Nice to meet you!</h1>
-        <p>Welcome to my portfolio! You can find information about my projects and experience here.</p> -->
-
-            <main>
-                <section class="hero">
-                    <p class="eyebrow">Home page</p>
-                    <h1>I'm Odinakachukwu Okafor<span class="cursor">_</span></h1>
-                    <p class="intro">I build things with code and write about what I learn.</p>
-                    <div class="hero-actions">
+        <main>
+            <section class="hero">
+                <p class="eyebrow">Home page</p>
+                <h1>I'm Odinakachukwu Okafor<span class="cursor">_</span></h1>
+                <p class="intro">Software Developer & Writer</p>
+                <p class="intro">Welcome to my portfolio! You can find information about my projects and experience here. I build things with code and write about what I learn.</p>
+                <div class="hero-actions">
                     <a href="projects.html" class="btn btn-primary">View projects</a>
                     <a href="writing.html" class="btn">Read my writing</a>
-                    </div>
-                </section>
-            </main>
+                </div>
+            </section>
+            <section class="section">
+                <div class="section-head">
+                    <h2>Latest writing</h2>
+                    <a href="writing.html" class="see-all">View all &rarr;</a>
+                </div>
+                <div class="card-grid" id="latest-articles"></div>
+            </section>
 
-        <!-- <h2>About me</h2>
-        <p>I'm a software developer with a passion for creating innovative solutions. I have experience in web development, and software engineering.</p>
-		<img src="hi.jpg" alt="Odinakachukwu Okafor" width="300px">
-        <h2>Projects</h2>
-        <ul>
-            <li><a href="index.html">Project 2</a></li>
-            <li><a href="index.html">Project 3</a></li>
-        </ul> -->
+            <section class="section">
+                <div class="section-head">
+                    <h2>Latest projects</h2>
+                    <a href="projects.html" class="see-all">View all &rarr;</a>
+                </div>
+                <div class="card-grid" id="latest-projects"></div>
+            </section>
+        </main>
 
     <footer class="footer">
         <p class="footer-message">Thanks for stopping by. Let's build something great together.</p>
@@ -51,5 +53,6 @@
         </div>
         <p class="footer-copy">&copy; 2026 Odinakachukwu Okafor</p>
     </footer>
+    <script src="script.js"></script>
 	</body>
 </html>

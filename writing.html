@@ -1,22 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Odinakachukwu's Portfolio</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Writing | Odinakachukwu Okafor</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header class="navbar">
-        <a href="index.html" class="logo">Odinakachukwu<span class="cursor">_</span></a>
-            <nav>
-                <a href="index.html" class="active">Home</a>
-                <a href="writing.html">Articles</a>
-                <a href="projects.html">Projects</a>
-                <a href="about.html">About</a>
-        </nav>
-    </header>
-    <footer class="footer">
+  <header class="navbar">
+    <a href="index.html" class="logo">Odinakachukwu<span class="cursor">_</span></a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="writing.html" class="active">Writing</a>
+      <a href="projects.html">Projects</a>
+      <a href="about.html">About</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-header">
+      <h1>Writing</h1>
+      <p>Articles on what I build and learn.</p>
+    </div>
+    <section class="section">
+      <div class="card-grid" id="all-articles"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
         <p class="footer-message">Thanks for stopping by. Let's build something great together.</p>
         <div class="social-links">
             <a href="https://github.com/your-handle" class="social-btn" target="_blank" rel="noopener">GitHub</a>
@@ -26,5 +37,7 @@
         </div>
         <p class="footer-copy">&copy; 2026 Odinakachukwu Okafor</p>
     </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>

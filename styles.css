@@ -100,3 +100,24 @@
   font-size: 0.75rem;
   color: var(--muted);
 }
+.section {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 0;
+}
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 1.5rem;
+}
+.section-head h2 {
+  font-family: var(--font-mono);
+  font-size: 1.3rem;
+}
+.see-all {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--accent);
+}
+.see-all:hover { text-decoration: underline; }
